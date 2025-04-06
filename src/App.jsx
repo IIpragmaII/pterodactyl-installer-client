@@ -17,6 +17,7 @@ import {
 import theme from "./theme";
 import { MuiFileInput } from "mui-file-input";
 import moment from "moment-timezone";
+import { useMutation } from "@tanstack/react-query";
 
 function App() {
   const [agree, setAgree] = useState(false);
@@ -33,6 +34,20 @@ function App() {
   const [serverIp, setServerIp] = useState("");
 
   const timezones = moment.tz.names();
+
+  const install = useMutation({
+    mutationFn: (newTodo) => {
+      return fetch(
+        window.location.hostname === "localhost"
+          ? "http://localhost:8080"
+          : "https://pterodactyl-installer-server-619074647413.europe-west1.run.app",
+        {
+          method: "POST",
+          body: JSON.stringify(newTodo),
+        },
+      );
+    },
+  });
 
   return (
     <ThemeProvider theme={theme}>
@@ -178,6 +193,21 @@ function App() {
                 fullWidth
                 style={{ marginTop: "20px" }}
                 disabled={!agree}
+                loading={install.isPending}
+                onClick={() =>
+                  install.mutate({
+                    serverIp,
+                    cert,
+                    password,
+                    dbPassword,
+                    email,
+                    timezone,
+                    pteroUsername,
+                    firstName,
+                    lastName,
+                    pteroPassword,
+                  })
+                }
               >
                 Install Server
               </Button>
