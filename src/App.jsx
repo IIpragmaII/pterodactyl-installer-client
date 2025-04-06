@@ -169,7 +169,7 @@ function App() {
                     color="primary"
                   />
                 }
-                label="I agree to the terms and conditions"
+                label="I agree that the provided informations are saved during the installation process."
               />
 
               <Button

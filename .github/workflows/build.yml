@@ -1,0 +1,26 @@
+name: Deploy
+run-name: Deploy to Cloudflare Pages ☁️
+on:
+  release:
+    types: released
+jobs:
+  Deploy-to-Cloudflare-Pages:
+    permissions:
+      contents: read
+      deployments: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: actions/setup-node@v4
+        with:
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: schafkopfen
+          directory: dist
+          branch: main
